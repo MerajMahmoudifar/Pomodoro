@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro - Master Your Focus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- GLOBAL & LANDING PAGE STYLES --- */
+        :root {
+            /* Light Theme Variables */
+            --primary-color: #6d28d9;
+            --primary-color-light: #8b5cf6;
+            --stop-color: #e11d48;
+            --dark-gray: #1f2937;
+            --medium-gray: #6b7280;
+            --light-gray: #e5e7eb;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --font-family-landing: 'Vazirmatn', sans-serif;
+            --icon-bg-color: #ede9fe;
+            --accent-blue: #60a5fa;
+            
+            /* Modal Light Theme Variables */
+            --modal-bg: #f9f9f9;
+            --modal-input-bg: #ffffff;
+            --modal-input-border: #cccccc;
+            --modal-font-color: #333333;
+        }
+        body.dark-theme {
+            /* Dark Theme Variables */
+            --primary-color: #8b5cf6;
+            --primary-color-light: #a78bfa;
+            --stop-color: #f43f5e;
+            --dark-gray: #f9fafb;
+            --medium-gray: #9ca3af;
+            --light-gray: #374151;
+            --bg-light: #111827;
+            --bg-white: #1f2937;
+            --icon-bg-color: #4338ca;
+            --accent-blue: #3730a3;
+            
+            /* Modal Dark Theme Variables */
+            --modal-bg: #2d3748;
+            --modal-input-bg: #1a202c;
+            --modal-input-border: #4a5568;
+            --modal-font-color: #e2e8f0;
+        }
+
+        /* Basic Resets */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-family-landing); background-color: var(--bg-light); color: var(--dark-gray); line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transition: background-color 0.4s ease, color 0.4s ease; }
+        .landing-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* --- Header / Navigation --- */
+        .main-header { padding: 1.5rem 0; background-color: var(--bg-light); transition: background-color 0.4s ease; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--light-gray); }
+        .main-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+        .logo { justify-self: start; }
+        .nav-links { justify-self: center; }
+        .nav-controls { justify-self: end; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--dark-gray); }
+        .logo-icon { background-color: var(--primary-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; transition: background-color 0.4s ease; }
+        .logo-icon svg { width: 24px; height: 24px; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; transition: color 0.4s ease; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--medium-gray); font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .nav-controls { display: flex; align-items: center; gap: 1.5rem; }
+        .theme-toggle-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 5px; color: var(--medium-gray); transition: transform 0.3s ease, color 0.3s ease; }
+        .theme-toggle-btn:hover { transform: scale(1.15) rotate(15deg); color: var(--primary-color); }
+        .nav-buttons { display: flex; gap: 1rem; }
+        .btn { font-family: var(--font-family-landing); padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-color-light); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-secondary { background-color: var(--bg-white); color: var(--medium-gray); border: 1px solid var(--light-gray); }
+        .btn-secondary:hover { border-color: var(--medium-gray); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        /* --- Hero Section --- */
+        .hero-section { padding: 6rem 0; text-align: center; position: relative; overflow: hidden; }
+        .hero-content { max-width: 750px; margin: 0 auto; }
+        .hero-content h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
+        .hero-content p { font-size: 1.25rem; color: var(--medium-gray); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .floating-icon { position: absolute; background-color: var(--bg-white); border-radius: 50%; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; animation: float 6s ease-in-out infinite; transition: background-color 0.4s ease;}
+        .floating-icon svg { width: 32px; height: 32px; color: var(--primary-color); transition: color 0.4s ease; }
+        #icon-sound { top: 15%; left: 10%; animation-delay: 0s; }
+        #icon-palette { top: 25%; right: 12%; animation-delay: -2s; }
+        #icon-clock { bottom: 20%; left: 20%; animation-delay: -4s; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+        /* --- Features Section --- */
+        .features-section { padding: 6rem 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, auto); gap: 2rem; align-items: stretch; }
+        .feature-card { background-color: var(--bg-white); border-radius: 20px; padding: 2.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .feature-card .caption { color: var(--medium-gray); }
+        #card-features { grid-column: 1 / 2; grid-row: 1 / 3; }
+        .feature-icons { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem; }
+        .feature-icon-item { display: flex; align-items: center; gap: 1.5rem; text-align: right; }
+        .feature-icon-item span { flex: 1; }
+        .feature-icon-item .icon-bg { width: 50px; height: 50px; background-color: var(--icon-bg-color); border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; transition: background-color 0.4s ease; }
+        .feature-icon-item .icon-bg svg { width: 24px; height: 24px; color: var(--primary-color); transition: color 0.4s ease;}
+        body.dark-theme .feature-icon-item .icon-bg svg { color: #e0e7ff; }
+
+        #card-social-proof { grid-column: 2 / 3; grid-row: 1 / 2; }
+        .testimonial-area { margin-top: 1.5rem; }
+        .user-avatars { display: flex; }
+        .user-avatars img { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--bg-white); }
+        .user-avatars img:not(:first-child) { margin-left: -15px; }
+        .stat-bubble { background-color: #e0f2fe; color: #0369a1; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; margin-left: 1rem; }
+        body.dark-theme .stat-bubble { background-color: #0c4a6e; color: #e0f2fe; }
+
+        #card-ui { grid-column: 2 / 3; grid-row: 2 / 3; overflow: hidden; padding: 0; }
+        .ui-image-wrapper { width: 100%; height: 150px; background-color: var(--accent-blue); transition: background-color 0.4s ease; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+        .card-ui-content { padding: 2rem 2.5rem; text-align: center; }
+
+        /* --- App Section --- */
+        #pomodoro-app-section { padding: 6rem 0; }
+        #pomodoro-app-section h2 { font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 3rem; }
+
+        /* --- Why Sign Up Section --- */
+        #why-signup { padding: 6rem 0; background-color: var(--bg-white); text-align: center; }
+        #why-signup h2 { font-size: 2.2rem; margin-bottom: 1.5rem; }
+        #why-signup p { max-width: 600px; margin: 0 auto 2rem auto; color: var(--medium-gray); font-size: 1.1rem; }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) { .main-nav { grid-template-columns: auto 1fr; } .nav-links, #login-btn { display: none; } .nav-controls { justify-self: end; } .features-grid { grid-template-columns: 1fr; grid-template-rows: auto; } #card-features, #card-social-proof, #card-ui { grid-column: auto; grid-row: auto; } .floating-icon { display: none; } }
+        @media (max-width: 768px) { .landing-wrapper { padding: 0 1rem; } .hero-section, .features-section, #pomodoro-app-section, #why-signup { padding: 4rem 0; } .hero-content h1 { font-size: 2.2rem; } .hero-content p { font-size: 1.1rem; } .main-nav { display: flex; justify-content: space-between; } .footer-grid { grid-template-columns: 1fr; text-align: center; } .footer-brand, .footer-links, .footer-social { align-items: center; } .social-icons { justify-content: center; } }
+
+        /* --- UNIFIED POMODORO APP STYLES --- */
+        .pomodoro-container { background-color: var(--bg-white); border: 1px solid var(--light-gray); box-shadow: 0 10px 20px rgba(0,0,0,0.05); font-family: var(--font-family-landing); position: relative; padding: 2.5rem; border-radius: 20px; text-align: center; width: 100%; max-width: 580px; margin: 0 auto; transition: all 0.4s ease; }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--light-gray); padding-bottom: 1.5rem; }
+        #session-counter { color: var(--medium-gray); font-weight: 500; }
+        .app-controls { display: flex; gap: 0.5rem; }
+        .pomodoro-container .top-icon { position: static; background: none; border: 1px solid var(--light-gray); border-radius: 50%; width: 40px; height: 40px; display: grid; place-items: center; font-size: 1.2rem; color: var(--medium-gray); transition: all 0.3s ease; }
+        .pomodoro-container .top-icon:hover { transform: scale(1.1); color: var(--primary-color); border-color: var(--primary-color); }
+        .pomodoro-container #status { color: var(--primary-color); font-size: 1.2rem; margin-bottom: 1rem; height: 25px; font-weight: 700; }
+        .pomodoro-container #timer-display { font-size: clamp(5rem, 22vw, 7.5rem); font-weight: 800; color: var(--dark-gray); margin-bottom: 2rem; letter-spacing: 2px; line-height: 1; }
+        .pomodoro-container .buttons { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+        .pomodoro-container .btn { min-width: 140px; padding: 1rem; font-size: 1.1rem; }
+        .pomodoro-container #start-stop-btn { background-color: var(--primary-color); color: white; }
+        .pomodoro-container #start-stop-btn.active { background-color: var(--stop-color); }
+        .pomodoro-container #reset-btn { background-color: var(--bg-white); color: var(--medium-gray); border: 1px solid var(--light-gray); }
+        .pomodoro-container #reset-btn:hover { border-color: var(--medium-gray); }
+        #task-list-container { margin-top: 1.5rem; text-align: right; }
+        #add-task-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        #task-input { flex-grow: 1; padding: 0.75rem; border: 1px solid var(--light-gray); border-radius: 8px; background-color: var(--bg-light); color: var(--dark-gray); font-family: var(--font-family-landing); }
+        #tasks-list { list-style: none; }
+        #tasks-list li { display: flex; align-items: center; padding: 0.75rem; background-color: var(--bg-light); border-radius: 8px; margin-bottom: 0.5rem; transition: all 0.3s ease; }
+        #tasks-list li.completed { opacity: 0.5; }
+        #tasks-list li.completed .task-text { text-decoration: line-through; }
+        #tasks-list li .task-text { flex-grow: 1; margin: 0 0.75rem; }
+        #tasks-list li .task-actions { display: flex; gap: 0.5rem; }
+        #tasks-list li .task-action-btn { background: none; border: none; color: var(--medium-gray); cursor: pointer; opacity: 0; transition: opacity 0.3s ease; padding: 0.25rem; }
+        #tasks-list li:hover .task-action-btn { opacity: 1; }
+        #tasks-list li.editing .task-action-btn, #tasks-list li.editing .custom-checkbox { opacity: 0.2; pointer-events: none; }
+        .custom-checkbox { width: 20px; height: 20px; border: 2px solid var(--medium-gray); border-radius: 50%; cursor: pointer; display: grid; place-items: center; transition: all 0.3s ease; }
+        .custom-checkbox.completed { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .custom-checkbox.completed svg { display: block; }
+        .custom-checkbox svg { display: none; color: white; width: 12px; height: 12px; }
+        .edit-input { width: 100%; padding: 0; margin: 0; background-color: transparent; border: none; border-bottom: 2px solid var(--primary-color); color: var(--dark-gray); font-family: var(--font-family-landing); font-size: 1rem; outline: none; }
+
+        /* --- MODAL STYLES --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; z-index: 1000; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal { background-color: var(--modal-bg); padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 90%; max-width: 420px; text-align: center; transform: scale(0.9); transition: transform 0.3s ease, background-color 0.4s ease; }
+        .modal-overlay.visible .modal { transform: scale(1); }
+        .modal h2 { margin-top: 0; color: var(--modal-font-color); font-family: var(--font-family-landing); }
+        .settings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0; }
+        .settings-grid label { display: block; margin-bottom: 0.5rem; color: var(--modal-font-color); opacity: 0.8; font-size: 0.9rem; }
+        .settings-grid input { width: 100%; padding: 0.75rem; font-size: 1.2rem; text-align: center; border: 2px solid var(--modal-input-border); border-radius: 8px; background-color: var(--modal-input-bg); color: var(--modal-font-color); }
+        .modal .buttons { display:flex; justify-content: center; gap: 1rem; }
+        .modal .buttons button { padding: 12px 25px; border-radius: 10px; font-weight: 700; color: white; }
+        .modal #save-settings-btn { background-color: var(--primary-color); }
+        .modal #cancel-settings-btn { background-color: var(--medium-gray); }
+
+        /* --- LOGIN MODAL STYLES --- */
+        .login-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; z-index: 2000; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .login-modal-overlay.visible { opacity: 1; visibility: visible; }
+        .login-modal { background-color: var(--bg-white); padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 90%; max-width: 400px; position: relative; transform: scale(0.9); transition: transform 0.3s ease, background-color 0.4s ease; }
+        .login-modal-overlay.visible .login-modal { transform: scale(1); }
+        .login-modal h2 { text-align: center; margin-bottom: 2rem; color: var(--dark-gray); }
+        .login-modal .form-group { margin-bottom: 1.5rem; }
+        .login-modal input { width: 100%; padding: 1rem; border: 1px solid var(--light-gray); border-radius: 8px; background-color: var(--bg-light); color: var(--dark-gray); font-family: var(--font-family-landing); font-size: 1rem; transition: all 0.3s ease; }
+        .login-modal input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, transparent); }
+        .login-modal .btn-primary { width: 100%; padding: 1rem; }
+        .login-modal .prompt-link { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--medium-gray); }
+        .login-modal .prompt-link a { color: var(--primary-color); text-decoration: none; font-weight: 700; cursor: pointer; }
+        .login-modal .close-modal-btn { position: absolute; top: 1rem; left: 1rem; background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--medium-gray); line-height: 1; }
+        .signup-fields { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, margin-top 0.4s ease-in-out; }
+        .login-modal.signup-mode .signup-fields { max-height: 300px; opacity: 1; margin-top: -1rem; }
+        #login-prompt { display: none; }
+        .login-modal.signup-mode #signup-prompt { display: none; }
+        .login-modal.signup-mode #login-prompt { display: block; }
+        
+        /* --- RICH FOOTER STYLES --- */
+        .main-footer { background-color: var(--bg-white); padding: 4rem 0 2rem 0; border-top: 1px solid var(--light-gray); transition: all 0.4s ease; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+        .footer-brand, .footer-links, .footer-social { display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; }
+        .footer-brand p { color: var(--medium-gray); max-width: 300px; }
+        .footer-links h4, .footer-social h4 { font-size: 1.1rem; color: var(--dark-gray); margin-bottom: 0.5rem; }
+        .footer-links ul, .footer-social ul { list-style: none; }
+        .footer-links a { color: var(--medium-gray); text-decoration: none; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--primary-color); }
+        .social-icons { display: flex; gap: 1rem; }
+        .social-icons a { color: var(--medium-gray); transition: color 0.3s ease; }
+        .social-icons a:hover { color: var(--primary-color); }
+        .social-icons svg { width: 24px; height: 24px; }
+        .footer-copyright { text-align: center; padding-top: 2rem; border-top: 1px solid var(--light-gray); color: var(--medium-gray); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="landing-wrapper">
+            <nav class="main-nav">
+                <a href="#" class="logo">
+                    <span class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm4.25-1.92l-1.77 1.02.5 1.73 1.77-1.02-.5-1.73zM7.52 8.1l-1.77-1.02-.5 1.73 1.77 1.02.5-1.73z"></path></svg></span>
+                    <span class="logo-text">Pomodoro</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features-section">امکانات</a></li>
+                    <li><a href="#pomodoro-app-section">برنامه</a></li>
+                </ul>
+                <div class="nav-controls">
+                    <button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" id="login-btn">ورود</button>
+                        <button class="btn btn-primary" id="start-focusing-btn-header">شروع تمرکز</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="floating-icon" id="icon-sound"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.5 4.5m0 0l4.5 4.5m-4.5-4.5L6.75 12.75m4.5-4.5l4.5-4.5m-4.5 4.5L11.25 3" /></svg></div>
+            <div class="floating-icon" id="icon-palette"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.82m5.84-2.56a14.978 14.978 0 00-5.84-2.56m5.84 2.56v4.82M17.25 3c-.87 0-1.7.2-2.43.57a6 6 0 00-5.84 7.38v4.82M17.25 3a14.953 14.953 0 010 18.001M17.25 3c2.43 0 4.6.83 6.3 2.25M6.75 18a6 6 0 01-5.84-7.38v-4.82A14.978 14.978 0 006.75 3c.87 0 1.7.2 2.43.57m-3 3.66A6 6 0 0112 3.75a6 6 0 015.83 4.49" /></svg></div>
+            <div class="floating-icon" id="icon-clock"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+            <div class="landing-wrapper hero-content">
+                <h1>بر تمرکز خود مسلط شوید، بر روز خود مسلط شوید.</h1>
+                <p>تایمر مینیمالیستی ما به شما کمک می‌کند با تقسیم روز به فواصل زمانی متمرکز، بر تعلل غلبه کرده و به کار عمیق دست یابید. همه در یک مکان آرام و زیبا.</p>
+                <button class="btn btn-primary" id="start-focusing-btn-hero" style="padding: 1rem 2rem; font-size: 1.1rem;">اولین جلسه خود را شروع کنید</button>
+            </div>
+        </section>
+
+        <section class="features-section" id="features-section">
+            <div class="landing-wrapper features-grid">
+                <div class="feature-card" id="card-features">
+                    <h3>فراتر از یک تایمر</h3>
+                    <p class="caption">ابزارهایی برای بهینه‌سازی کامل گردش کار شما.</p>
+                    <div class="feature-icons">
+                        <div class="feature-icon-item">
+                           <div class="icon-bg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></div>
+                           <span><b>مدیریت وظایف یکپارچه:</b> وظایف روزانه خود را اضافه کرده و با هر جلسه پومودورو، پیشرفت خود را به صورت بصری مشاهده کنید.</span>
+                        </div>
+                        <div class="feature-icon-item">
+                           <div class="icon-bg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg></div>
+                           <span><b>گزارش‌های روزانه:</b> با گزارش‌های ساده و انگیزشی از میزان تمرکز روزانه خود، بهره‌وری خود را دنبال کنید.</span>
+                        </div>
+                        <div class="feature-icon-item">
+                           <div class="icon-bg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg></div>
+                           <span><b>جلسات قابل تنظیم:</b> طول جلسات و استراحت‌ها را مطابق با سبک خود تنظیم کنید.</span>
+                        </div>
+                        <div class="feature-icon-item">
+                           <div class="icon-bg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-2.475 2.475M12 9.75l2.475 2.475M3.75 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg></div>
+                           <span><b>همگام‌سازی بین دستگاه‌ها:</b> با یک حساب کاربری رایگان، وظایف و تاریخچه جلسات خود را برای همیشه ذخیره و همگام‌سازی کنید.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card" id="card-social-proof">
+                    <h3>محبوب افراد موفق</h3>
+                    <p><i>"این برنامه واقعاً نحوه کار کردن من را تغییر داد."</i></p>
+                    <div class="testimonial-area" style="display:flex; align-items:center;">
+                        <div class="user-avatars">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="User 1">
+                            <img src="https://i.pravatar.cc/150?img=2" alt="User 2">
+                            <img src="https://i.pravatar.cc/150?img=3" alt="User 3">
+                        </div>
+                        <span class="stat-bubble">+۵۰ هزار جلسه</span>
+                    </div>
+                </div>
+                <div class="feature-card" id="card-ui">
+                    <div class="ui-image-wrapper"></div>
+                    <div class="card-ui-content">
+                        <h3>پناهگاه تمرکز شما</h3>
+                        <p class="caption">یک رابط کاربری زیبا و بدون حواس‌پرتی.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pomodoro-app-section">
+            <div class="landing-wrapper">
+                 <h2>تایمر هوشمند پومودورو</h2>
+                <div class="pomodoro-container">
+                    <div class="app-header">
+                        <div id="session-counter">جلسه ۱ از ۴</div>
+                        <div class="app-controls">
+                            <button id="settings-btn" class="top-icon" title="Settings">⚙️</button>
+                        </div>
+                    </div>
+                    <p id="status">زمان تمرکز</p>
+                    <div id="timer-display">25:00</div>
+                    <div class="buttons">
+                        <button id="start-stop-btn" class="btn">شروع</button>
+                        <button id="reset-btn" class="btn">ریست</button>
+                    </div>
+                    <div id="task-list-container">
+                        <form id="add-task-form">
+                            <input type="text" id="task-input" placeholder="یک وظیفه جدید اضافه کنید...">
+                            <button type="submit" class="btn btn-primary" style="min-width: auto; padding: 0.75rem;">+</button>
+                        </form>
+                        <ul id="tasks-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="why-signup">
+            <div class="landing-wrapper">
+                <h2>فراتر از یک تایمر ساده</h2>
+                <p>یک حساب کاربری رایگان ایجاد کنید تا وظایف خود را ذخیره کنید، تاریخچه جلسات خود را پیگیری نمایید و پیشرفت خود را در تمام دستگاه‌ها همگام‌سازی کنید. هرگز یک دقیقه از تمرکز خود را از دست ندهید.</p>
+                <button class="btn btn-primary" id="signup-now-btn">همین حالا ثبت نام کنید</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="landing-wrapper">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm4.25-1.92l-1.77 1.02.5 1.73 1.77-1.02-.5-1.73zM7.52 8.1l-1.77-1.02-.5 1.73 1.77 1.02.5-1.73z"></path></svg></span>
+                        <span class="logo-text">Pomodoro</span>
+                    </a>
+                    <p>متعهد به کمک به شما برای یافتن تمرکز و دستیابی به اهداف خود، یک جلسه در یک زمان.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>صفحات</h4>
+                    <ul>
+                        <li><a href="#features-section">امکانات</a></li>
+                        <li><a href="#pomodoro-app-section">برنامه</a></li>
+                        <li><a href="#">سوالات متداول</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>ما را دنبال کنید</h4>
+                    <div class="social-icons">
+                        <a href="#"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>X</title><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 7.184L18.901 1.153zm-1.8 19.498h2.688L7.132 3.33h-2.67l12.57 17.321z"/></svg></a>
+                        <a href="#"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2024 Pomodoro App. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Pomodoro Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>تنظیمات تایمر</h2>
+            <div class="settings-grid">
+                <div>
+                    <label for="focus-time-input">تمرکز</label>
+                    <input type="number" id="focus-time-input" min="1" max="999">
+                </div>
+                <div>
+                    <label for="short-break-input">استراحت کوتاه</label>
+                    <input type="number" id="short-break-input" min="1" max="999">
+                </div>
+                <div>
+                    <label for="long-break-input">استراحت طولانی</label>
+                    <input type="number" id="long-break-input" min="1" max="999">
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="save-settings-btn" class="btn">ذخیره</button>
+                <button id="cancel-settings-btn" class="btn">لغو</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login/Signup Modal -->
+    <div id="login-modal-overlay" class="login-modal-overlay">
+        <div id="login-modal" class="login-modal">
+            <button id="close-login-modal-btn" class="close-modal-btn">&times;</button>
+            <h2 id="login-modal-title">ورود به حساب کاربری</h2>
+            <form>
+                <div class="form-group">
+                    <input type="text" placeholder="نام کاربری" required>
+                </div>
+                <div class="signup-fields">
+                    <div class="form-group">
+                        <input type="email" placeholder="آدرس ایمیل" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="رمز عبور" required>
+                </div>
+                <div class="signup-fields">
+                    <div class="form-group">
+                        <input type="password" placeholder="تایید رمز عبور" required>
+                    </div>
+                </div>
+                <button type="submit" id="login-submit-btn" class="btn btn-primary">ورود</button>
+                
+                <p id="signup-prompt" class="prompt-link">حساب کاربری ندارید؟ <a id="signup-link">ثبت نام کنید</a></p>
+                <p id="login-prompt" class="prompt-link">قبلاً ثبت‌نام کرده‌اید؟ <a id="login-link">وارد شوید</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- GLOBAL & LANDING PAGE SCRIPTS ---
+            const body = document.body;
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const scrollToApp = (event) => { event.preventDefault(); document.getElementById('pomodoro-app-section').scrollIntoView({ behavior: 'smooth' }); };
+            document.getElementById('start-focusing-btn-header').addEventListener('click', scrollToApp);
+            document.getElementById('start-focusing-btn-hero').addEventListener('click', scrollToApp);
+            function switchTheme() { body.classList.toggle('dark-theme'); themeToggleBtn.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙'; }
+            themeToggleBtn.addEventListener('click', switchTheme);
+            
+            // --- Login/Signup Modal Logic ---
+            const loginBtn = document.getElementById('login-btn');
+            const signupNowBtn = document.getElementById('signup-now-btn');
+            const loginModalOverlay = document.getElementById('login-modal-overlay');
+            const loginModal = document.getElementById('login-modal');
+            const closeLoginModalBtn = document.getElementById('close-login-modal-btn');
+            const loginModalTitle = document.getElementById('login-modal-title');
+            const loginSubmitBtn = document.getElementById('login-submit-btn');
+            const signupLink = document.getElementById('signup-link');
+            const loginLink = document.getElementById('login-link');
+            function showLoginModal(visible, mode = 'login') {
+                if (visible) {
+                    if (mode === 'signup') {
+                        loginModal.classList.add('signup-mode');
+                        loginModalTitle.textContent = 'ایجاد حساب کاربری';
+                        loginSubmitBtn.textContent = 'ثبت نام';
+                    } else {
+                        loginModal.classList.remove('signup-mode');
+                        loginModalTitle.textContent = 'ورود به حساب کاربری';
+                        loginSubmitBtn.textContent = 'ورود';
+                    }
+                    loginModalOverlay.classList.add('visible');
+                } else {
+                    loginModalOverlay.classList.remove('visible');
+                }
+            }
+            signupLink.addEventListener('click', (e) => { e.preventDefault(); showLoginModal(true, 'signup'); });
+            loginLink.addEventListener('click', (e) => { e.preventDefault(); showLoginModal(true, 'login'); });
+            loginBtn.addEventListener('click', () => showLoginModal(true, 'login'));
+            signupNowBtn.addEventListener('click', () => showLoginModal(true, 'signup'));
+            closeLoginModalBtn.addEventListener('click', () => showLoginModal(false));
+            loginModalOverlay.addEventListener('click', (e) => { if (e.target === loginModalOverlay) showLoginModal(false); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && loginModalOverlay.classList.contains('visible')) showLoginModal(false); });
+
+            
+            // --- POMODORO APP SCRIPTS ---
+            const timerDisplay = document.getElementById('timer-display');
+            const startStopBtn = document.getElementById('start-stop-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const statusDisplay = document.getElementById('status');
+            const sessionCounterDisplay = document.getElementById('session-counter');
+            
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const focusTimeInput = document.getElementById('focus-time-input');
+            const shortBreakInput = document.getElementById('short-break-input');
+            const longBreakInput = document.getElementById('long-break-input');
+            const saveSettingsBtn = document.getElementById('save-settings-btn');
+            const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
+            
+            const addTaskForm = document.getElementById('add-task-form');
+            const taskInput = document.getElementById('task-input');
+            const tasksList = document.getElementById('tasks-list');
+            
+            const notificationSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV1MYwAAAAAAAAAAAAAAAAAAAAAAFEAAAAA2AAARgAAAAwAMjAwMAAAAAAAAAAAAAA/+MxwAAAAAAAAAAAAAAAFlbGFtZQAAAAPAAAAAAAABAbwAAAAAAAAAAAAAAP/MQwAAAACwAAAAATEFN//+MYwgAAAAADDAyNTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA-");
+            
+            // App State
+            let workMinutes, shortBreakMinutes, longBreakMinutes, pomodorosUntilLongBreak;
+            let timerInterval = null, isRunning = false, isWorkSession = true;
+            let secondsRemaining, pomodoroCount;
+            let tasks = [];
+            let isAudioEnabled = false;
+
+           // NEW: Fetches tasks from our D1 database via the API
+        async function loadTasksFromServer() {
+        try {
+            const response = await fetch('/api/tasks');
+           if (!response.ok) throw new Error('Failed to fetch tasks');
+           const serverTasks = await response.json();
+           tasks = serverTasks;
+           renderTasks();
+        } catch (error) {
+           console.error("Could not load tasks:", error);
+           // Optionally show an error message to the user
+          tasksList.innerHTML = '<li>Could not load tasks.</li>';
+    }   
+}
+
+            function updateDisplay() {
+                const minutes = Math.floor(secondsRemaining / 60);
+                const seconds = secondsRemaining % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.title = `${timerDisplay.textContent} - ${statusDisplay.textContent}`;
+                const sessionInCycle = pomodoroCount < pomodorosUntilLongBreak ? (pomodoroCount % pomodorosUntilLongBreak) + 1 : 1;
+                sessionCounterDisplay.textContent = `جلسه ${isWorkSession ? sessionInCycle : Math.max(1, sessionInCycle -1)} از ${pomodorosUntilLongBreak}`;
+            }
+
+            function playNotificationSound() { if (isAudioEnabled) notificationSound.play().catch(e => console.error(e)); }
+
+            function switchSession() {
+                if(isWorkSession) {
+                    pomodoroCount++;
+                    saveState();
+                }
+                isWorkSession = !isWorkSession;
+                if(isWorkSession) {
+                    statusDisplay.textContent = 'زمان تمرکز';
+                    secondsRemaining = workMinutes * 60;
+                } else {
+                    if(pomodoroCount > 0 && pomodoroCount % pomodorosUntilLongBreak === 0) {
+                        statusDisplay.textContent = 'استراحت طولانی';
+                        secondsRemaining = longBreakMinutes * 60;
+                    } else {
+                        statusDisplay.textContent = 'استراحت کوتاه';
+                        secondsRemaining = shortBreakMinutes * 60;
+                    }
+                }
+                updateDisplay();
+                playNotificationSound();
+            }
+
+            function tick() {
+                if (secondsRemaining > 0) { secondsRemaining--; } else { switchSession(); }
+                updateDisplay();
+            }
+
+            function toggleTimer() {
+                if (!isAudioEnabled) {
+                    notificationSound.load();
+                    isAudioEnabled = true;
+                }
+                isRunning = !isRunning;
+                if (isRunning) {
+                    timerInterval = setInterval(tick, 1000);
+                    startStopBtn.textContent = 'توقف'; startStopBtn.classList.add('active');
+                } else {
+                    clearInterval(timerInterval);
+                    startStopBtn.textContent = 'شروع'; startStopBtn.classList.remove('active');
+                }
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                isRunning = false; isWorkSession = true;
+                secondsRemaining = workMinutes * 60;
+                updateDisplay();
+                statusDisplay.textContent = 'زمان تمرکز';
+                startStopBtn.textContent = 'شروع';
+                startStopBtn.classList.remove('active');
+            }
+
+            function showSettingsModal(visible) {
+                if (visible) {
+                    focusTimeInput.value = workMinutes;
+                    shortBreakInput.value = shortBreakMinutes;
+                    longBreakInput.value = longBreakMinutes;
+                }
+                settingsModal.classList.toggle('visible', visible);
+            }
+
+            function saveSettings() {
+                workMinutes = parseInt(focusTimeInput.value) || 25;
+                shortBreakMinutes = parseInt(shortBreakInput.value) || 5;
+                longBreakMinutes = parseInt(longBreakInput.value) || 15;
+                saveState();
+                resetTimer();
+                showSettingsModal(false);
+            }
+            
+            function renderTasks() {
+                tasksList.innerHTML = '';
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.dataset.id = task.id;
+                    li.className = task.completed ? 'completed' : '';
+                    li.innerHTML = `
+                        <div class="custom-checkbox ${task.completed ? 'completed' : ''}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        </div>
+                        <span class="task-text">${task.text}</span>
+                        <div class="task-actions">
+                            <button class="task-action-btn edit-task-btn" title="Edit Task">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/></svg>
+                            </button>
+                            <button class="task-action-btn delete-task-btn" title="Delete Task">&times;</button>
+                        </div>
+                    `;
+                    tasksList.appendChild(li);
+                });
+            }
+            
+            // UPDATED: addTask function
+async function addTask(e) {
+    e.preventDefault();
+    const text = taskInput.value.trim();
+    if (text) {
+        const newTask = { text, completed: false };
+
+        // Send new task to the server
+        await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newTask)
+        });
+        
+        taskInput.value = '';
+        // Reload tasks from server to show the new one
+        await loadTasksFromServer();
+    }
+}
+
+            // UPDATED: handleTaskClick function
+
+
+async function handleTaskClick(e) {
+    const target = e.target.closest('.task-action-btn, .custom-checkbox');
+    if (!target) return;
+
+    const li = target.closest('li');
+    if (!li) return;
+
+    const id = parseInt(li.dataset.id);
+    const task = tasks.find(task => task.id === id);
+    if (!task) return;
+
+    if (target.classList.contains('delete-task-btn')) {
+        await fetch(`/api/tasks?id=${id}`, { method: 'DELETE' });
+        await loadTasksFromServer(); // Reload list
+    } else if (target.classList.contains('custom-checkbox')) {
+        task.completed = !task.completed;
+        await fetch(`/api/tasks?id=${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task)
+        });
+        await loadTasksFromServer(); // Reload list
+    } else if (target.classList.contains('edit-task-btn')) {
+        editTask(li, id);
+    }
+}
+
+            // UPDATED: editTask function
+function editTask(li, id) {
+    li.classList.add('editing');
+    const taskTextSpan = li.querySelector('.task-text');
+    const currentText = taskTextSpan.textContent;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'edit-input';
+    input.value = currentText;
+
+    taskTextSpan.replaceWith(input);
+    input.focus();
+    input.select();
+
+    const saveEdit = async () => {
+        const newText = input.value.trim();
+        const task = tasks.find(t => t.id === id);
+        
+        if (newText && task && newText !== task.text) {
+            task.text = newText;
+             await fetch(`/api/tasks?id=${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(task)
+            });
+        }
+        await loadTasksFromServer(); // Redraw to exit edit mode
+    };
+
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveEdit();
+        } else if (e.key === 'Escape') {
+            renderTasks(); // Cancel by redrawing
+        }
+    });
+}
+
+            // Initial Load
+            loadTasksFromServer();
+
+            // Event Listeners
+            startStopBtn.addEventListener('click', toggleTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            settingsBtn.addEventListener('click', () => showSettingsModal(true));
+            cancelSettingsBtn.addEventListener('click', () => showSettingsModal(false));
+            settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) showSettingsModal(false); });
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            addTaskForm.addEventListener('submit', addTask);
+            tasksList.addEventListener('click', handleTaskClick);
+        });
+    </script>
+</body>
+</html>

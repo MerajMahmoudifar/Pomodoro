@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تایمر پومودورو</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #ecf0f1;
+            --container-bg: #2c3e50;
+            --modal-bg: #f9f9f9;
+            --modal-input-bg: #ffffff;
+            --modal-input-border: #cccccc;
+            --modal-font-color: #333333;
+            --font-color-primary: #ffffff;
+            --font-color-secondary: #ecf0f1;
+            --reset-btn-bg: #7f8c8d;
+            --theme-icon-color: #a0aec0;
+            --accent-color-start: #B4E50D;
+            --accent-color-stop: #c0392b;
+            --font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body.dark-theme {
+            /* Professional Dark Theme */
+            --bg-color: #121212;
+            --container-bg: #1E1E1E;
+            --modal-bg: #2d3748;
+            --modal-input-bg: #1a202c;
+            --modal-input-border: #4a5568;
+            --modal-font-color: #e2e8f0;
+            --font-color-primary: #E0E0E0;
+            --font-color-secondary: #BDBDBD;
+            --reset-btn-bg: #424242;
+            --theme-icon-color: #BDBDBD;
+            --accent-color-start: #78C841;
+            --accent-color-stop: #E53E3E;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            transition: background-color 0.4s ease;
+        }
+
+        .container {
+            position: relative;
+            background-color: var(--container-bg);
+            /* REFINEMENT: Adaptive side padding */
+            padding: 40px clamp(1.5rem, 8vw, 50px);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%; /* Changed from 90% to 100% to work with body padding */
+            max-width: 480px;
+            transition: background-color 0.4s ease;
+        }
+        
+        .top-icon {
+            position: absolute;
+            top: 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.5rem;
+            color: var(--theme-icon-color);
+            transition: transform 0.3s ease, color 0.4s ease;
+        }
+        .top-icon:hover {
+            transform: scale(1.15);
+        }
+        #theme-toggle-btn { left: clamp(1rem, 6vw, 25px); }
+        #settings-btn { right: clamp(1rem, 6vw, 25px); }
+
+        h1, #timer-display, #status { transition: color 0.4s ease; }
+        h1 { color: var(--font-color-primary); margin-bottom: 10px; font-size: 2rem; }
+        #status { color: var(--font-color-secondary); font-size: 1.2rem; margin-bottom: 20px; height: 25px; }
+        
+        #timer-display {
+            /* REFINEMENT: Truly fluid font size for perfect scaling */
+            font-size: clamp(4.5rem, 20vw, 7rem);
+            font-weight: 700;
+            color: var(--font-color-primary);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .buttons { display: flex; justify-content: center; gap: 15px; }
+
+        button {
+            font-family: var(--font-family);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            color: #ffffff;
+            min-width: 100px;
+        }
+        
+        #start-stop-btn { background-color: var(--accent-color-start) !important; }
+        #save-settings-btn { background-color: var(--accent-color-start) !important; }
+        #start-stop-btn.active { background-color: var(--accent-color-stop) !important; }
+        #reset-btn { background-color: var(--reset-btn-bg) !important; }
+        #cancel-settings-btn { background-color: var(--reset-btn-bg) !important; }
+        
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; z-index: 1000;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+
+        .modal {
+            background-color: var(--modal-bg);
+            padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 90%; max-width: 320px; text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease, background-color 0.4s ease;
+        }
+        .modal-overlay.visible .modal { transform: scale(1); }
+
+        .modal h2 { margin-top: 0; color: var(--modal-font-color); }
+        .modal p { color: var(--modal-font-color); opacity: 0.8; }
+        .modal input {
+            width: 80%; padding: 10px; margin: 20px 0; font-size: 1.2rem; text-align: center;
+            border: 2px solid var(--modal-input-border); border-radius: 8px;
+            background-color: var(--modal-input-bg); color: var(--modal-font-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button id="theme-toggle-btn" class="top-icon">🌙</button>
+        <button id="settings-btn" class="top-icon">⚙️</button>
+        <h1>تایمر پومودورو</h1>
+        <p id="status">زمان تمرکز</p>
+        <div id="timer-display">25:00</div>
+        <div class="buttons">
+            <button id="start-stop-btn">شروع</button>
+            <button id="reset-btn">ریست</button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>تنظیم زمان</h2>
+            <p>زمان جدید برای هر جلسه کاری را (به دقیقه) وارد کنید.</p>
+            <input type="number" id="work-time-input" min="1" max="999" value="25">
+            <div class="buttons">
+                <button id="save-settings-btn">ذخیره</button>
+                <button id="cancel-settings-btn">لغو</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        
+            const body = document.body;
+            const timerDisplay = document.getElementById('timer-display');
+            const startStopBtn = document.getElementById('start-stop-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const statusDisplay = document.getElementById('status');
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const workTimeInput = document.getElementById('work-time-input');
+            const saveSettingsBtn = document.getElementById('save-settings-btn');
+            const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
+            
+            let workMinutes = 25;
+            const BREAK_MINUTES = 5;
+            let timerInterval = null;
+            let isRunning = false;
+            let isWorkSession = true;
+            let secondsRemaining = workMinutes * 60;
+            let isAudioEnabled = false;
+            const notificationSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV+/MYwAAAAAAAAAAAAAAAAAAAAAAFEAAAAA2AAARgAAAAwAMjAwMAAAAAAAAAAAAAA/+MxwAAAAAAAAAAAAAAAFlbGFtZQAAAAPAAAAAAAABAbwAAAAAAAAAAAAAAP/MQwAAAACwAAAAATEFN//+MYwgAAAAADDAyNTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA-");
+            
+            function updateDisplay() {
+                const minutes = Math.floor(secondsRemaining / 60);
+                const seconds = secondsRemaining % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            function playNotificationSound() { if (isAudioEnabled) notificationSound.play().catch(e => console.error(e)); }
+
+            function switchSession() {
+                isWorkSession = !isWorkSession;
+                secondsRemaining = (isWorkSession ? workMinutes : BREAK_MINUTES) * 60;
+                statusDisplay.textContent = isWorkSession ? 'زمان تمرکز' : 'زمان استراحت';
+                updateDisplay();
+                playNotificationSound();
+            }
+
+            function tick() {
+                if (secondsRemaining > 0) { secondsRemaining--; } else { switchSession(); }
+                updateDisplay();
+            }
+
+            function toggleTimer() {
+                if (!isRunning && !isAudioEnabled) { notificationSound.load(); isAudioEnabled = true; }
+                isRunning = !isRunning;
+                if (isRunning) {
+                    timerInterval = setInterval(tick, 1000);
+                    startStopBtn.textContent = 'توقف'; startStopBtn.classList.add('active');
+                } else {
+                    clearInterval(timerInterval);
+                    startStopBtn.textContent = 'شروع'; startStopBtn.classList.remove('active');
+                }
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null; isRunning = false; isWorkSession = true;
+                secondsRemaining = workMinutes * 60;
+                updateDisplay();
+                statusDisplay.textContent = 'زمان تمرکز';
+                startStopBtn.textContent = 'شروع';
+                startStopBtn.classList.remove('active');
+            }
+            
+            function switchTheme() {
+                body.classList.toggle('dark-theme');
+                themeToggleBtn.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+            }
+
+            function showSettingsModal(visible) {
+                settingsModal.classList.toggle('visible', visible);
+                if (visible) { workTimeInput.value = workMinutes; workTimeInput.focus(); }
+            }
+
+            function saveSettings() {
+                const newTime = parseInt(workTimeInput.value, 10);
+                if (newTime && newTime > 0 && newTime <= 999) {
+                    workMinutes = newTime;
+                    resetTimer();
+                    showSettingsModal(false);
+                } else {
+                    alert('لطفاً یک عدد معتبر بین 1 و 999 وارد کنید.');
+                }
+            }
+
+            startStopBtn.addEventListener('click', toggleTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            themeToggleBtn.addEventListener('click', switchTheme);
+            settingsBtn.addEventListener('click', () => showSettingsModal(true));
+            cancelSettingsBtn.addEventListener('click', () => showSettingsModal(false));
+            settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) showSettingsModal(false); });
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
